@@ -1,4 +1,6 @@
 env = "dev"
 
-[API]
-    useRedis = false
+[api]
+    redis = false
+    host = "localhost"
+    port = 8000

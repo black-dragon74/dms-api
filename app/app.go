@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"github.com/black-dragon74/dms-api/app/router"
+	"github.com/black-dragon74/dms-api/config"
 	"github.com/gorilla/handlers"
 	"go.uber.org/zap"
 	"net/http"
@@ -11,24 +12,20 @@ import (
 	"time"
 )
 
-const (
-	serverAddress = "127.0.0.1:8000"
-)
-
-func Start(lgr *zap.Logger) {
+func Start(cfg config.Config, lgr *zap.Logger) {
 	rtr := router.NewRouter(lgr)
 
 	srv := &http.Server{
 		Handler: handlers.RecoveryHandler()(rtr),
-		Addr:    serverAddress,
+		Addr:    cfg.API.GetAddress(),
 	}
 
 	go gracefulShutdown(lgr, srv)
 
-	lgr.Sugar().Info("Server is up and running on http://", serverAddress)
+	lgr.Sugar().Info("[App] [Start] Server is up and running on http://", cfg.API.GetAddress())
 	err := srv.ListenAndServe()
 	if err != nil && err != http.ErrServerClosed {
-		lgr.Error("Failed to start the server")
+		lgr.Sugar().Error("[App] [Start] Failed to start the server", err.Error())
 	}
 }
 

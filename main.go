@@ -9,5 +9,5 @@ import (
 func main() {
 	cfg := config.Load()
 	lgr := initialize.Logger(cfg)
-	app.Start(lgr)
+	app.Start(cfg, lgr)
 }

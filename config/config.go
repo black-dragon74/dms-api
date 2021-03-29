@@ -1,34 +1,48 @@
 package config
 
 import (
-	"github.com/pelletier/go-toml"
-	"io/ioutil"
+	"github.com/spf13/viper"
 	"log"
-	"os"
 )
 
 type Config struct {
-	Env string
+	env string
 	API APIConfig
+}
+
+func (c Config) GetEnv() string {
+	return c.env
 }
 
 // Load loads the config.toml file for the server and logger configuration
 func Load() Config {
-	file, err := os.Open(os.Args[1])
+	// Load the viper
+	err := loadViper()
 	if err != nil {
-		log.Fatal("Failed to load the config file", err)
+		log.Fatal("Unable to load viper")
 	}
 
-	data, err := ioutil.ReadAll(file)
-	if err != nil {
-		log.Fatal("Unable to read from the file", err)
-	}
-
-	myCfg := Config{}
-	err = toml.Unmarshal(data, &myCfg)
-	if err != nil {
-		log.Fatal("Unable to de-serialize the config", err)
+	myCfg := Config{
+		env: viper.GetString("env"),
+		API: APIConfig{
+			redis: viper.GetBool("api.redis"),
+			host:  viper.GetString("api.host"),
+			port:  viper.GetInt("api.port"),
+		},
 	}
 
 	return myCfg
+}
+
+func loadViper() error {
+	viper.SetConfigName("config")
+	viper.SetConfigType("toml")
+	viper.AddConfigPath(".")
+
+	err := viper.ReadInConfig()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
