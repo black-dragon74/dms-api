@@ -15,7 +15,7 @@ func (c Config) GetEnv() string {
 }
 
 // Load loads the config.toml file for the server and logger configuration
-func Load() Config {
+func Load() *Config {
 	// Load the viper
 	err := loadViper()
 	if err != nil {
@@ -25,13 +25,15 @@ func Load() Config {
 	myCfg := Config{
 		env: viper.GetString("env"),
 		API: APIConfig{
-			redis: viper.GetBool("api.redis"),
-			host:  viper.GetString("api.host"),
-			port:  viper.GetInt("api.port"),
+			redis:        viper.GetBool("api.redis"),
+			host:         viper.GetString("api.host"),
+			port:         viper.GetInt("api.port"),
+			facultyData:  viper.GetString("api.facultyData"),
+			messMenuData: viper.GetString("api.messMenuData"),
 		},
 	}
 
-	return myCfg
+	return &myCfg
 }
 
 func loadViper() error {

@@ -19,3 +19,7 @@
 
 # macOS
 .DS_Store
+
+# Data dirs
+data/*
+!data/.gitkeep

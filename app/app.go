@@ -12,8 +12,8 @@ import (
 	"time"
 )
 
-func Start(cfg config.Config, lgr *zap.Logger) {
-	rtr := router.NewRouter(lgr)
+func Start(cfg *config.Config, lgr *zap.Logger) {
+	rtr := router.NewRouter(lgr, cfg)
 
 	srv := &http.Server{
 		Handler: handlers.RecoveryHandler()(rtr),

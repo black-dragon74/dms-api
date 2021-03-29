@@ -1,6 +1,16 @@
+# Change to `prod` when shipping for release
 env = "dev"
 
 [api]
+    # Redis is used to cache the session IDs to improve performance
     redis = false
+
+    # Host and port to listen on
     host = "localhost"
     port = 8000
+
+    # These files are required in order to start the server
+    # If you have stored your files in some other location
+    # Please specify the location here
+    facultyData = "data/faculties.json"
+    messMenuData = "data/mess_menu.json"

@@ -6,7 +6,7 @@ import (
 	"log"
 )
 
-func Logger(c config.Config) *zap.Logger {
+func Logger(c *config.Config) *zap.Logger {
 	var lgr *zap.Logger
 	var err error
 
@@ -20,5 +20,6 @@ func Logger(c config.Config) *zap.Logger {
 		log.Fatal("Unable to initialize the logger", err)
 	}
 
+	lgr.Info("[Initialize] [Logger] All systems go. Starting server")
 	return lgr
 }
