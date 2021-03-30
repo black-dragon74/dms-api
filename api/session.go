@@ -12,7 +12,7 @@ func (s Session) GetID() string {
 	return s.sid
 }
 
-func newSession(sessionID string) Session {
+func NewSession(sessionID string) Session {
 	return Session{
 		sid: sessionID,
 	}
