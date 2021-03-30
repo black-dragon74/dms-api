@@ -112,6 +112,7 @@ Failure to comply to above will lead in your PR being trashed.
 This API would never have been possible without the support of:
 
 - [Sidharth Soni](https://github.com/sid-sun) - For everything.
+- [black-dragon74](https://github.com/black-dragon74) - For writing this software and maintaining it.
 
 ***Another hobby project by Nick ;=)***
 
