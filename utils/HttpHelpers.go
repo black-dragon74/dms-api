@@ -18,6 +18,24 @@ func NewRequest(method string, path string, cookies *map[string]string, headers 
 	return req
 }
 
+func GetSessionFromResponse(resp *http.Response) string {
+	if len(resp.Cookies()) == 0 {
+		return ""
+	} else {
+		for _, v := range resp.Cookies() {
+			if v.Name == SessionCookie {
+				return v.Value
+			}
+		}
+	}
+
+	return ""
+}
+
+func ErrorToJSON(msg string) []byte {
+	return []byte(`"error":"` + msg + `"`)
+}
+
 func getURL(path string) *url.URL {
 	u, _ := url.Parse(path)
 	return u

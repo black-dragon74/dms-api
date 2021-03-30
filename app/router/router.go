@@ -30,6 +30,9 @@ func NewRouter(lgr *zap.Logger, cfg *config.Config) *mux.Router {
 	rtr.HandleFunc("/mess_menu", handler.MessMenuHandler(lgr, store.MessMenuData)).Methods(http.MethodGet)
 	rtr.HandleFunc("/contacts", handler.ContactsHandler(lgr, store.ContactsData)).Methods(http.MethodGet)
 
+	// Routes part of auth handshake, don't need any query vars
+	rtr.HandleFunc("/captcha", handler.GetCaptchaHandler(lgr)).Methods(http.MethodGet)
+
 	// Some browsers request for favicon even when the content type is set to JSON, handle that
 	rtr.HandleFunc("/favicon.ico", handler.FaviconHandler(lgr)).Methods(http.MethodGet)
 

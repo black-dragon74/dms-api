@@ -38,4 +38,5 @@ const (
 	IdForEventsTable        = "ContentPlaceHolder1_grdEventDetails"
 	IdForPaidFeeTable       = "ContentPlaceHolder1_grdPaidFeesDetails"
 	IdForUnpaidFeeTable     = "ContentPlaceHolder1_grdFeeDetails"
+	IdForCaptcha            = "imgCaptcha"
 )
