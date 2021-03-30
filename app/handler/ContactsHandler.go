@@ -2,24 +2,16 @@ package handler
 
 import (
 	"fmt"
-	"github.com/black-dragon74/dms-api/api"
-	"github.com/black-dragon74/dms-api/config"
+	"github.com/black-dragon74/dms-api/types"
 	"go.uber.org/zap"
 	"net/http"
 )
 
-func ContactsHandler(lgr *zap.Logger, cfg *config.Config) http.HandlerFunc {
+func ContactsHandler(lgr *zap.Logger, store *types.GlobalDataStore) http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
 		lgr.Info("[Handler] [ContactsHandler] Handling /contacts")
 
-		dms := api.NewDMSService("", cfg)
-		data, err := dms.GetContacts()
-		if err != nil {
-			lgr.Error(fmt.Sprintf("[Handler] [ContactsHandler] [GetContacts] %s", err.Error()))
-			return
-		}
-
-		_, err = writer.Write(data)
+		_, err := writer.Write(store.ContactsData)
 		if err != nil {
 			lgr.Error(fmt.Sprintf("[Handler] [ContactsHandler] [Write] %s", err.Error()))
 		}

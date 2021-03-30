@@ -20,6 +20,6 @@ func Logger(c *config.Config) *zap.Logger {
 		log.Fatal("Unable to initialize the logger", err)
 	}
 
-	lgr.Info("[Initialize] [Logger] All systems go. Starting server")
+	lgr.Info("[Initialize] [Logger] Loaded config and logger, bootstrap begin")
 	return lgr
 }

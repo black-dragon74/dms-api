@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"fmt"
 	"github.com/black-dragon74/dms-api/app/router"
 	"github.com/black-dragon74/dms-api/config"
 	"github.com/gorilla/handlers"
@@ -22,10 +23,10 @@ func Start(cfg *config.Config, lgr *zap.Logger) {
 
 	go gracefulShutdown(lgr, srv)
 
-	lgr.Sugar().Info("[App] [Start] Server is up and running on http://", cfg.API.GetAddress())
+	lgr.Info(fmt.Sprintf("[App] [Start] Server is up and running on http://%s", cfg.API.GetAddress()))
 	err := srv.ListenAndServe()
 	if err != nil && err != http.ErrServerClosed {
-		lgr.Sugar().Error("[App] [Start] Failed to start the server", err.Error())
+		lgr.Error(fmt.Sprintf("[App] [Start] Failed to start the server, %s", err.Error()))
 	}
 }
 
