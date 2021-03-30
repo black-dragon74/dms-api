@@ -15,6 +15,10 @@ import (
 
 func Start(cfg *config.Config, lgr *zap.Logger) {
 	rtr := router.NewRouter(lgr, cfg)
+	if rtr == nil {
+		// Error already logged in `NewRouter`
+		return
+	}
 
 	srv := &http.Server{
 		Handler: handlers.RecoveryHandler()(rtr),

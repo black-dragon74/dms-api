@@ -14,13 +14,13 @@ func DataStore(lgr *zap.Logger, cfg *config.Config) (*types.GlobalDataStore, err
 
 	data, err := read(cfg.API.GetMessMenuDataStore())
 	if err != nil {
-		return store, err
+		return &types.GlobalDataStore{}, err
 	}
 	store.MessMenuData = data
 
 	data, err = read(cfg.API.GetFacultyDataStore())
 	if err != nil {
-		return store, err
+		return &types.GlobalDataStore{}, err
 	}
 	store.ContactsData = data
 
