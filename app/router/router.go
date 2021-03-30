@@ -21,6 +21,9 @@ func NewRouter(lgr *zap.Logger, cfg *config.Config) *mux.Router {
 	rtr.HandleFunc("/mess_menu", handler.MessMenuHandler(lgr, cfg)).Methods(http.MethodGet)
 	rtr.HandleFunc("/contacts", handler.ContactsHandler(lgr, cfg)).Methods(http.MethodGet)
 
+	// Some browsers request for favicon even when the content type is set to JSON, handle that
+	rtr.HandleFunc("/favicon.ico", handler.FaviconHandler(lgr)).Methods(http.MethodGet)
+
 	// Should be the last to allow sieving of requests
 	rtr.HandleFunc("/{*}", handler.FourOhFourHandler(lgr)).Methods(http.MethodGet)
 
