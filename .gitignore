@@ -23,3 +23,6 @@
 # Data dirs
 data/*
 !data/.gitkeep
+
+# Python virtual env
+venv
