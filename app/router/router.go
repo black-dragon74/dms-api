@@ -2,6 +2,7 @@ package router
 
 import (
 	"fmt"
+	"github.com/black-dragon74/dms-api/api"
 	"github.com/black-dragon74/dms-api/app/handler"
 	"github.com/black-dragon74/dms-api/app/middleware"
 	"github.com/black-dragon74/dms-api/config"
@@ -31,6 +32,13 @@ func NewRouter(lgr *zap.Logger, cfg *config.Config) *mux.Router {
 
 	// Some browsers request for favicon even when the content type is set to JSON, handle that
 	rtr.HandleFunc("/favicon.ico", handler.FaviconHandler(lgr)).Methods(http.MethodGet)
+
+	if cfg.GetEnv() == config.DevEnv {
+		rtr.HandleFunc("/test", func(w http.ResponseWriter, r *http.Request) {
+			sess := api.NewSession("hnvahilvkw5ld3gq2un12jfk", lgr)
+			sess.Validate()
+		}).Methods(http.MethodGet)
+	}
 
 	// Should be the last to allow sieving of requests
 	rtr.HandleFunc("/{*}", handler.FourOhFourHandler(lgr)).Methods(http.MethodGet)

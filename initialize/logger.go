@@ -10,7 +10,7 @@ func Logger(c *config.Config) *zap.Logger {
 	var lgr *zap.Logger
 	var err error
 
-	if c.GetEnv() == "dev" {
+	if c.GetEnv() == config.DevEnv {
 		lgr, err = zap.NewDevelopmentConfig().Build()
 	} else {
 		lgr, err = zap.NewProductionConfig().Build()

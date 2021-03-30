@@ -10,6 +10,8 @@ type Config struct {
 	API APIConfig
 }
 
+const DevEnv = "dev"
+
 func (c Config) GetEnv() string {
 	return c.env
 }
