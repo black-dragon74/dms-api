@@ -1,16 +1,19 @@
-package api
+package internal
 
 import (
-	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/black-dragon74/dms-api/utils"
-	"go.uber.org/zap"
+	"io"
+	"io/ioutil"
 	"net/http"
 )
 
 type Session struct {
 	sid string
-	lgr *zap.Logger
+}
+
+func (s Session) GetID() string {
+	return s.sid
 }
 
 func (s Session) Validate() bool {
@@ -18,14 +21,12 @@ func (s Session) Validate() bool {
 	// It should not be null
 	resp, err := s.Get(utils.ProfileURL, nil, nil)
 	if err != nil {
-		s.lgr.Error(fmt.Sprintf("[Session] [Validate] %s", err.Error()))
 		return false
 	}
 	defer resp.Body.Close()
 
 	doc, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
-		s.lgr.Error(fmt.Sprintf("[Session] [Validate] [NewDocumentFromReader] %s", err.Error()))
 		return false
 	}
 
@@ -35,10 +36,9 @@ func (s Session) Validate() bool {
 	return e
 }
 
-func NewSession(sessionID string, lgr *zap.Logger) Session {
+func NewSession(sessionID string) Session {
 	return Session{
 		sid: sessionID,
-		lgr: lgr,
 	}
 }
 
@@ -56,7 +56,32 @@ func (s Session) Get(url string, cookies *map[string]string, headers *map[string
 		headers = &map[string][]string{utils.SessionCookie: {s.sid}}
 	}
 
-	request := utils.NewRequest("GET", url, cookies, headers)
+	request := utils.NewRequest("GET", url, cookies, headers, nil)
+
+	resp, err := http.DefaultClient.Do(request)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+}
+
+func (s Session) Post(url string, cookies *map[string]string, headers *map[string][]string, body io.Reader) (*http.Response, error) {
+	// Add session specific headers
+	if cookies != nil {
+		(*cookies)[utils.SessionCookie] = s.sid
+	} else {
+		cookies = &map[string]string{utils.SessionCookie: s.sid}
+	}
+
+	if headers != nil {
+		(*headers)[utils.SessionCookie] = []string{s.sid}
+	} else {
+		headers = &map[string][]string{utils.SessionCookie: {s.sid}}
+	}
+
+	bodyCloser := ioutil.NopCloser(body)
+	request := utils.NewRequest("POST", url, cookies, headers, &bodyCloser)
 
 	resp, err := http.DefaultClient.Do(request)
 	if err != nil {

@@ -11,7 +11,7 @@ import (
 func GetCaptchaHandler(lgr *zap.Logger) http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
 		lgr.Info("[Handler] [GetCaptchaHandler] Handling /captcha")
-		resp, err := api.GetCaptcha(lgr)
+		resp, err := api.GetCaptcha()
 		if err != nil {
 			_, _ = writer.Write(utils.ErrorToJSON(err.Error()))
 			return

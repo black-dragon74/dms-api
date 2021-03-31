@@ -14,6 +14,9 @@ const (
 	EventURL      = DmsURL + "studenthomepage.aspx"
 	FeeURL        = DmsURL + "feedetailmuj.aspx"
 
+	// Test URLS
+	PostManPost = "https://postman-echo.com/post"
+
 	// Cookies
 	SessionCookie = "ASP.NET_SessionId"
 
@@ -39,4 +42,29 @@ const (
 	IdForPaidFeeTable       = "ContentPlaceHolder1_grdPaidFeesDetails"
 	IdForUnpaidFeeTable     = "ContentPlaceHolder1_grdFeeDetails"
 	IdForCaptcha            = "imgCaptcha"
+	IdForCredentialsError   = "span#labelerror"
+	IdForCaptchaError       = "span#lblErrorMsg"
+
+	// Header Values
+	HeaderAccept                  = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"
+	HeaderAcceptLanguage          = "en-US,en;q=0.9"
+	HeaderCacheControl            = "max-age=0"
+	HeaderConnection              = "keep-alive"
+	HeaderContentType             = "application/x-www-form-urlencoded"
+	HeaderDNT                     = "1"
+	HeaderHost                    = "dms.jaipur.manipal.edu"
+	HeaderOrigin                  = DmsURL
+	HeaderReferer                 = DmsURL + LoginURL
+	HeaderSecFetchDest            = "document"
+	HeaderSecFetchMode            = "navigate"
+	HeaderSecFetchSite            = "same-origin"
+	HeaderSecFetchUser            = "?1"
+	HeaderUpgradeInsecureRequests = "1"
+	HeaderUserAgent               = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36"
+
+	// ASP.NET Specific Values
+	ASPLoginEventTarget        = "hprlnkStduent"
+	ASPLoginEventValidation    = "/wEdAAep4CnDEBO+DK7ogDE9yIJSdR78oILfrSzgm87C/a1IYZxpWckI3qdmfEJVCu2f5cGK8hF2GuqB1EkPPnfRI0IzmX+TFKdoKJU/yfSArg3MIyhcPbspsZuAvIcHzSMoo5oTEvVQ5UbiG8J6VK1P0lg47nw9ow/C86maq2rS+tJpbynFcaYfcgcmP+IGmR/HOn4="
+	ASPLoginViewState          = "/wEPDwUKLTQxMTUwMTQyNw9kFgICAw9kFgICAw9kFgQCCQ9kFgJmD2QWAgIBDw8WAh4ISW1hZ2VVcmwFJ0dlbmVyYXRlQ2FwdGNoYS5hc3B4PzYzNzM0MjY4MjUyNjcyOTc5NGRkAhMPDxYCHgdWaXNpYmxlaGRkZFbWHdkndpKMZ2FmRaLaq+f+wL+6ZH//WlWjnAiYNA/W"
+	ASPLoginViewStateGenerator = "6ED0046F"
 )

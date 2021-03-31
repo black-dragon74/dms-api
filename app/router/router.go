@@ -2,7 +2,6 @@ package router
 
 import (
 	"fmt"
-	"github.com/black-dragon74/dms-api/api"
 	"github.com/black-dragon74/dms-api/app/handler"
 	"github.com/black-dragon74/dms-api/app/middleware"
 	"github.com/black-dragon74/dms-api/config"
@@ -32,14 +31,17 @@ func NewRouter(lgr *zap.Logger, cfg *config.Config) *mux.Router {
 
 	// Routes part of auth handshake, don't need any query vars
 	rtr.HandleFunc("/captcha", handler.GetCaptchaHandler(lgr)).Methods(http.MethodGet)
+	rtr.HandleFunc(
+		"/captcha_auth",
+		handler.CaptchaAuthHandler(lgr)).Methods(http.MethodGet)
 
 	// Some browsers request for favicon even when the content type is set to JSON, handle that
 	rtr.HandleFunc("/favicon.ico", handler.FaviconHandler(lgr)).Methods(http.MethodGet)
 
 	if cfg.GetEnv() == config.DevEnv {
 		rtr.HandleFunc("/test", func(w http.ResponseWriter, r *http.Request) {
-			sess := api.NewSession("hnvahilvkw5ld3gq2un12jfk", lgr)
-			sess.Validate()
+			// Write your route specific tests here
+
 		}).Methods(http.MethodGet)
 	}
 

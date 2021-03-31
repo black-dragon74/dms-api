@@ -1,60 +1,102 @@
 package api
 
 import (
-	"encoding/base64"
-	"encoding/json"
 	"github.com/PuerkitoBio/goquery"
+	"github.com/black-dragon74/dms-api/api/internal"
 	"github.com/black-dragon74/dms-api/types"
 	"github.com/black-dragon74/dms-api/utils"
 	"go.uber.org/zap"
-	"io/ioutil"
-	"net/http"
+	"net/url"
+	"strings"
 )
 
 type DMSService struct {
-	session Session
+	session internal.Session
+	lgr     *zap.Logger
 }
 
-func GetCaptcha(lgr *zap.Logger) ([]byte, error) {
-	// Get login URL
-	resp, err := http.Get(utils.LoginURL)
+func NewDMSService(sessionID string, lgr *zap.Logger) DMSService {
+	svc := DMSService{
+		session: internal.NewSession(sessionID),
+		lgr:     lgr,
+	}
+
+	return svc
+}
+
+func (d DMSService) Login(userName string, password string, captcha string) (types.CaptchaAuthModel, error) {
+	// Prepare the Headers
+	reqHeaders := map[string][]string{
+		"Accept":                    {utils.HeaderAccept},
+		"Accept-Language":           {utils.HeaderAcceptLanguage},
+		"Cache-Control":             {utils.HeaderCacheControl},
+		"Connection":                {utils.HeaderConnection},
+		"Content-Type":              {utils.HeaderContentType},
+		"DNT":                       {utils.HeaderDNT},
+		"Host":                      {utils.HeaderHost},
+		"Origin":                    {utils.HeaderOrigin},
+		"Referer":                   {utils.HeaderReferer},
+		"Sec-Fetch-Dest":            {utils.HeaderSecFetchDest},
+		"Sec-Fetch-Mode":            {utils.HeaderSecFetchMode},
+		"Sec-Fetch-Site":            {utils.HeaderSecFetchSite},
+		"Sec-Fetch-User":            {utils.HeaderSecFetchUser},
+		"Upgrade-Insecure-Requests": {utils.HeaderUpgradeInsecureRequests},
+		"User-Agent":                {utils.HeaderUserAgent},
+	}
+
+	// Prepare the Request Body
+	reqPayload := url.Values{
+		"__VIEWSTATE":          {utils.ASPLoginViewState},
+		"__EVENTVALIDATION":    {utils.ASPLoginEventValidation},
+		"__VIEWSTATEGENERATOR": {utils.ASPLoginViewStateGenerator},
+		"__EVENTTARGET":        {utils.ASPLoginEventTarget},
+		"txtUserid":            {userName},
+		"txtpassword":          {password},
+		"txtCaptcha":           {captcha},
+	}.Encode()
+
+	resp, err := d.session.Post(utils.LoginURL, nil, &reqHeaders, strings.NewReader(reqPayload))
 	if err != nil {
-		return []byte{}, err
+		return types.CaptchaAuthModel{}, err
 	}
 	defer resp.Body.Close()
 
-	// Get the session ID from the request
-	retVal := types.GetCaptchaModel{}
-	sessionID := utils.GetSessionFromResponse(resp)
+	retVal := types.CaptchaAuthModel{}
+	retVal.SessionID = d.session.GetID()
 
-	if sessionID != "" {
-		retVal.SessionID = sessionID
-	}
+	// Prolly un-necessary as struct elems are initialized to zero-values in go
+	//loginResp.LoginSucceeded = false
+	//loginResp.CaptchaFailed = false
 
-	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	soup, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
-		return []byte{}, err
+		return types.CaptchaAuthModel{}, err
 	}
 
-	// Get the captcha generator URL
-	v, e := doc.Find("#" + utils.IdForCaptcha).Attr("src")
-	if !e {
-		return []byte{}, err
+	// Now parse the body and have a peek at different elements to check if login was successful
+	name, exists := soup.Find("#" + utils.IdForName).Attr("value")
+	if !exists {
+		// A breif of how the checks are done for login
+		// 1. Captcha must be valid at all times
+		// 2. If captcha was valid, either the limit is exhausted or the credentials are wrong
+
+		// Check #1
+		captchaError := soup.Find(utils.IdForCaptchaError).Text()
+		if strings.Contains(captchaError, "Captcha") {
+			retVal.CaptchaFailed = true
+		} else {
+			// Check #2
+			// Since captcha was not invalid now we have to check
+			// If the daily limit is exhausted. If not, the credentials are invalid
+			authErrror := soup.Find(utils.IdForCredentialsError).Text()
+			if strings.Contains(authErrror, "exceded") {
+				retVal.LoginSucceeded = true
+			}
+		}
+	} else {
+		retVal.UserName = name
+		retVal.LoginSucceeded = true
 	}
-	retVal.Generator = utils.DmsURL + v
 
-	// Now get the new URL with session
-	sess := NewSession(retVal.SessionID, lgr)
-	resp, err = sess.Get(retVal.Generator, nil, nil)
-	if err != nil {
-		return []byte{}, err
-	}
-	defer resp.Body.Close()
-
-	rawByte, _ := ioutil.ReadAll(resp.Body)
-	retVal.EncodedImage = base64.StdEncoding.EncodeToString(rawByte)
-
-	data, err := json.Marshal(retVal)
-
-	return data, nil
+	return retVal, nil
 }
