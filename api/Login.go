@@ -54,7 +54,7 @@ func (d DMSService) Login(userName string, password string, captcha string) (typ
 	}
 
 	// Now parse the body and have a peek at different elements to check if login was successful
-	name, exists := soup.Find("#" + utils.IdForName).Attr("value")
+	name, exists := soup.Find(utils.IdForName).Attr("value")
 	if !exists {
 		// A breif of how the checks are done for login
 		// 1. Captcha must be valid at all times

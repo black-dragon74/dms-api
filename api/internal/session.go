@@ -30,7 +30,7 @@ func (s Session) Validate() bool {
 		return false
 	}
 
-	reg := doc.Find("#" + utils.IdForRegno)
+	reg := doc.Find(utils.IdForRegno)
 	_, e := reg.Attr("value")
 
 	return e

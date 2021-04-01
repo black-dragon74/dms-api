@@ -32,7 +32,7 @@ func GetCaptcha() (types.GetCaptchaModel, error) {
 	}
 
 	// Get the captcha generator URL
-	v, e := doc.Find("#" + utils.IdForCaptcha).Attr("src")
+	v, e := doc.Find(utils.IdForCaptcha).Attr("src")
 	if !e {
 		return types.GetCaptchaModel{}, err
 	}
