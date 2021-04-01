@@ -30,10 +30,9 @@ func (s Session) Validate() bool {
 		return false
 	}
 
-	reg := doc.Find(utils.IdForRegno)
-	_, e := reg.Attr("value")
+	reg := utils.GetValueFromInput(doc, utils.IdForRegno)
 
-	return e
+	return reg != ""
 }
 
 func NewSession(sessionID string) Session {
