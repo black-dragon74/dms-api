@@ -63,7 +63,7 @@ func ParseHTMLTable(tbl *goquery.Document, elemID string) (types.HTMLTableModel,
 	dataContainer.Each(func(i int, row *goquery.Selection) {
 		tArr := make([]string, 0)
 		row.Find("td").Each(func(i int, v *goquery.Selection) {
-			tArr = append(tArr, v.Text())
+			tArr = append(tArr, strings.TrimSpace(v.Text()))
 		})
 		dataArr = append(dataArr, tArr)
 	})
