@@ -52,7 +52,7 @@ func (s Session) Get(url string, headers *map[string][]string) (*http.Response, 
 		headers = &map[string][]string{utils.SessionCookie: {s.sid}}
 	}
 
-	request := utils.NewRequest("GET", url, cookies, headers, nil)
+	request := utils.NewRequest(http.MethodGet, url, cookies, headers, nil)
 
 	resp, err := http.DefaultClient.Do(request)
 	if err != nil {
@@ -73,7 +73,7 @@ func (s Session) Post(url string, headers *map[string][]string, body io.Reader) 
 	}
 
 	bodyCloser := ioutil.NopCloser(body)
-	request := utils.NewRequest("POST", url, cookies, headers, &bodyCloser)
+	request := utils.NewRequest(http.MethodPost, url, cookies, headers, &bodyCloser)
 
 	resp, err := http.DefaultClient.Do(request)
 	if err != nil {
