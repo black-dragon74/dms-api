@@ -14,13 +14,13 @@ func GetCaptchaHandler(lgr *zap.Logger) http.HandlerFunc {
 		lgr.Info("[Handler] [GetCaptchaHandler] Handling /captcha")
 		resp, err := api.GetCaptcha()
 		if err != nil {
-			_, _ = writer.Write(utils.ErrorToJSON(err.Error()))
+			utils.WriteJSONError(writer, err)
 			return
 		}
 
 		data, err := json.Marshal(resp)
 		if err != nil {
-			_, _ = writer.Write(utils.ErrorToJSON(err.Error()))
+			utils.WriteJSONError(writer, err)
 			return
 		}
 

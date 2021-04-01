@@ -20,7 +20,7 @@ func CaptchaAuthHandler(lgr *zap.Logger) http.HandlerFunc {
 		// Check if all the requested args are supplied to us by the user
 		err := utils.ValidateArgs(&vars, &queryVars)
 		if err != nil {
-			_, _ = writer.Write(utils.ErrorToJSON(err.Error()))
+			utils.WriteJSONError(writer, err)
 			return
 		}
 
@@ -28,13 +28,13 @@ func CaptchaAuthHandler(lgr *zap.Logger) http.HandlerFunc {
 		dmsService := api.NewDMSService(queryVars["sessionid"], lgr)
 		resp, err := dmsService.Login(queryVars["username"], queryVars["password"], queryVars["captcha"])
 		if err != nil {
-			_, _ = writer.Write(utils.ErrorToJSON(err.Error()))
+			utils.WriteJSONError(writer, err)
 			return
 		}
 
 		data, err := json.Marshal(resp)
 		if err != nil {
-			_, _ = writer.Write(utils.ErrorToJSON(err.Error()))
+			utils.WriteJSONError(writer, err)
 			return
 		}
 

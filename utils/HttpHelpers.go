@@ -40,11 +40,6 @@ func GetSessionFromResponse(resp *http.Response) string {
 	return ""
 }
 
-// ErrorToJSON returns a JSON formatted string with the `msg` as error
-func ErrorToJSON(msg string) []byte {
-	return []byte(`{"error":"` + msg + `"}`)
-}
-
 // ParseArgs reads variables passed as URL query string in the request
 func ParseArgs(request *http.Request, values *[]string) map[string]string {
 	resp := make(map[string]string)
@@ -68,6 +63,16 @@ func ValidateArgs(keys *[]string, store *map[string]string) error {
 	}
 
 	return nil
+}
+
+// WriteJSONError writes error to the HTTP response as a JSON object
+func WriteJSONError(writer http.ResponseWriter, error error) {
+	_, _ = writer.Write(errorToJSON(error.Error()))
+}
+
+// errorToJSON returns a JSON formatted string with the `msg` as error
+func errorToJSON(msg string) []byte {
+	return []byte(`{"error":"` + msg + `"}`)
 }
 
 func getURL(path string) *url.URL {
