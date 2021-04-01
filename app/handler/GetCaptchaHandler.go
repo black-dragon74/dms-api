@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/black-dragon74/dms-api/api"
 	"github.com/black-dragon74/dms-api/utils"
@@ -17,7 +18,13 @@ func GetCaptchaHandler(lgr *zap.Logger) http.HandlerFunc {
 			return
 		}
 
-		_, err = writer.Write(resp)
+		data, err := json.Marshal(resp)
+		if err != nil {
+			_, _ = writer.Write(utils.ErrorToJSON(err.Error()))
+			return
+		}
+
+		_, err = writer.Write(data)
 		if err != nil {
 			lgr.Error(fmt.Sprintf("[Handler] [GetCaptchaHandler] [Write] %s", err.Error()))
 		}

@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/base64"
-	"encoding/json"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/black-dragon74/dms-api/api/internal"
 	"github.com/black-dragon74/dms-api/types"
@@ -11,11 +10,11 @@ import (
 	"net/http"
 )
 
-func GetCaptcha() ([]byte, error) {
+func GetCaptcha() (types.GetCaptchaModel, error) {
 	// Get login URL
 	resp, err := http.Get(utils.LoginURL)
 	if err != nil {
-		return []byte{}, err
+		return types.GetCaptchaModel{}, err
 	}
 	defer resp.Body.Close()
 
@@ -29,13 +28,13 @@ func GetCaptcha() ([]byte, error) {
 
 	doc, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
-		return []byte{}, err
+		return types.GetCaptchaModel{}, err
 	}
 
 	// Get the captcha generator URL
 	v, e := doc.Find("#" + utils.IdForCaptcha).Attr("src")
 	if !e {
-		return []byte{}, err
+		return types.GetCaptchaModel{}, err
 	}
 	retVal.Generator = utils.DmsURL + v
 
@@ -43,14 +42,12 @@ func GetCaptcha() ([]byte, error) {
 	sess := internal.NewSession(retVal.SessionID)
 	resp, err = sess.Get(retVal.Generator, nil)
 	if err != nil {
-		return []byte{}, err
+		return types.GetCaptchaModel{}, err
 	}
 	defer resp.Body.Close()
 
 	rawByte, _ := ioutil.ReadAll(resp.Body)
 	retVal.EncodedImage = base64.StdEncoding.EncodeToString(rawByte)
 
-	data, err := json.Marshal(retVal)
-
-	return data, nil
+	return retVal, nil
 }
