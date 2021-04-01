@@ -19,7 +19,7 @@ func (s Session) GetID() string {
 func (s Session) Validate() bool {
 	// Make a get request to profileURL and check for reg no ID's value
 	// It should not be null
-	resp, err := s.Get(utils.ProfileURL, nil, nil)
+	resp, err := s.Get(utils.ProfileURL, nil)
 	if err != nil {
 		return false
 	}
@@ -42,13 +42,9 @@ func NewSession(sessionID string) Session {
 	}
 }
 
-func (s Session) Get(url string, cookies *map[string]string, headers *map[string][]string) (*http.Response, error) {
+func (s Session) Get(url string, headers *map[string][]string) (*http.Response, error) {
 	// Add session specific headers
-	if cookies != nil {
-		(*cookies)[utils.SessionCookie] = s.sid
-	} else {
-		cookies = &map[string]string{utils.SessionCookie: s.sid}
-	}
+	cookies := &map[string]string{utils.SessionCookie: s.sid}
 
 	if headers != nil {
 		(*headers)[utils.SessionCookie] = []string{s.sid}
@@ -66,13 +62,9 @@ func (s Session) Get(url string, cookies *map[string]string, headers *map[string
 	return resp, nil
 }
 
-func (s Session) Post(url string, cookies *map[string]string, headers *map[string][]string, body io.Reader) (*http.Response, error) {
+func (s Session) Post(url string, headers *map[string][]string, body io.Reader) (*http.Response, error) {
 	// Add session specific headers
-	if cookies != nil {
-		(*cookies)[utils.SessionCookie] = s.sid
-	} else {
-		cookies = &map[string]string{utils.SessionCookie: s.sid}
-	}
+	cookies := &map[string]string{utils.SessionCookie: s.sid}
 
 	if headers != nil {
 		(*headers)[utils.SessionCookie] = []string{s.sid}

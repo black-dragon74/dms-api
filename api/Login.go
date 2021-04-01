@@ -39,7 +39,7 @@ func (d DMSService) Login(userName string, password string, captcha string) (typ
 		"txtCaptcha":           {captcha},
 	}.Encode()
 
-	resp, err := d.session.Post(utils.LoginURL, nil, &reqHeaders, strings.NewReader(reqPayload))
+	resp, err := d.session.Post(utils.LoginURL, &reqHeaders, strings.NewReader(reqPayload))
 	if err != nil {
 		return types.CaptchaAuthModel{}, err
 	}

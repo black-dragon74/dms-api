@@ -41,7 +41,7 @@ func GetCaptcha() ([]byte, error) {
 
 	// Now get the new URL with session
 	sess := internal.NewSession(retVal.SessionID)
-	resp, err = sess.Get(retVal.Generator, nil, nil)
+	resp, err = sess.Get(retVal.Generator, nil)
 	if err != nil {
 		return []byte{}, err
 	}
