@@ -1,6 +1,6 @@
 package types
 
-type GlobalDataStore struct {
+type DataStoreModel struct {
 	MessMenuData []byte
 	ContactsData []byte
 }

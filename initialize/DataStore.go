@@ -8,19 +8,19 @@ import (
 	"time"
 )
 
-func DataStore(lgr *zap.Logger, cfg *config.Config) (*types.GlobalDataStore, error) {
+func DataStore(lgr *zap.Logger, cfg *config.Config) (*types.DataStoreModel, error) {
 	lgr.Info("[Initilaize] [DataStore] Loading stores in memory")
-	store := &types.GlobalDataStore{}
+	store := &types.DataStoreModel{}
 
 	data, err := read(cfg.API.GetMessMenuDataStore())
 	if err != nil {
-		return &types.GlobalDataStore{}, err
+		return &types.DataStoreModel{}, err
 	}
 	store.MessMenuData = data
 
 	data, err = read(cfg.API.GetFacultyDataStore())
 	if err != nil {
-		return &types.GlobalDataStore{}, err
+		return &types.DataStoreModel{}, err
 	}
 	store.ContactsData = data
 
@@ -38,7 +38,7 @@ func read(file string) ([]byte, error) {
 	return ioutil.ReadFile(file)
 }
 
-func watchStoreForChanges(cfg *config.Config, store *types.GlobalDataStore, lgr *zap.Logger) {
+func watchStoreForChanges(cfg *config.Config, store *types.DataStoreModel, lgr *zap.Logger) {
 	lgr.Info("[Initialize] [DataStore] [WatchStoreForChanges] Actively monitoring store for changes")
 	messTicker := time.NewTicker(5 * time.Minute)
 	contactsTicker := time.NewTicker(4 * time.Hour)
