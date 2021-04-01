@@ -4,15 +4,20 @@ import "fmt"
 
 // APIConfig reflects the type for file `config.toml`
 type APIConfig struct {
-	redis        bool
-	host         string
-	port         int
-	facultyData  string
-	messMenuData string
+	redis            bool
+	monitorDataStore bool
+	host             string
+	port             int
+	facultyData      string
+	messMenuData     string
 }
 
 func (a APIConfig) UseRedis() bool {
 	return a.redis
+}
+
+func (a APIConfig) MonitorDataStore() bool {
+	return a.monitorDataStore
 }
 
 func (a APIConfig) GetAddress() string {

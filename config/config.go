@@ -27,11 +27,12 @@ func Load() *Config {
 	myCfg := Config{
 		env: viper.GetString("env"),
 		API: APIConfig{
-			redis:        viper.GetBool("api.redis"),
-			host:         viper.GetString("api.host"),
-			port:         viper.GetInt("api.port"),
-			facultyData:  viper.GetString("api.facultyData"),
-			messMenuData: viper.GetString("api.messMenuData"),
+			redis:            viper.GetBool("api.redis"),
+			monitorDataStore: viper.GetBool("api.monitorDataStore"),
+			host:             viper.GetString("api.host"),
+			port:             viper.GetInt("api.port"),
+			facultyData:      viper.GetString("api.facultyData"),
+			messMenuData:     viper.GetString("api.messMenuData"),
 		},
 	}
 

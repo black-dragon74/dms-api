@@ -30,6 +30,9 @@ env = "dev"
 # If `true` a redis server must be running on your machine
 redis = false
 
+# Turn this on if you want to monitor physical data store using a separate go routine
+monitorDataStore = true
+
 # Host and port to listen on
 host = "localhost"
 port = 8000

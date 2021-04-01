@@ -5,6 +5,9 @@ env = "dev"
     # Redis is used to cache the session IDs to improve performance
     redis = false
 
+    # Turn this on if you want to monitor physical data store using a separate go routine
+    monitorDataStore = true
+
     # Host and port to listen on
     host = "localhost"
     port = 8000

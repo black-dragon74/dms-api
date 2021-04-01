@@ -24,7 +24,12 @@ func DataStore(lgr *zap.Logger, cfg *config.Config) (*types.GlobalDataStore, err
 	}
 	store.ContactsData = data
 
-	go watchStoreForChanges(cfg, store, lgr)
+	// Watch for changes if requested
+	if cfg.API.MonitorDataStore() {
+		go watchStoreForChanges(cfg, store, lgr)
+	} else {
+		lgr.Info("[Initialize] [DataStore] [WatchStoreForChanges] Monitoring disabled by config")
+	}
 
 	return store, nil
 }
