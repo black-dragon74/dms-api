@@ -14,7 +14,7 @@ func CaptchaAuthHandler(lgr *zap.Logger) http.HandlerFunc {
 		lgr.Info("[Handler] [CaptchaAuthHandler] Handling /captcha_auth")
 
 		// Extract vars from the URL query string
-		vars := []string{"sessionid", "username", "password", "captcha"}
+		vars := []string{utils.VarSessionID, utils.VarUserName, utils.VarPassword, utils.VarCaptcha}
 		queryVars := utils.ParseArgs(request, &vars)
 
 		// Check if all the requested args are supplied to us by the user
@@ -25,8 +25,8 @@ func CaptchaAuthHandler(lgr *zap.Logger) http.HandlerFunc {
 		}
 
 		// Create a new DMS service and ask it to log us in
-		dmsService := api.NewDMSService(queryVars["sessionid"], lgr)
-		resp, err := dmsService.Login(queryVars["username"], queryVars["password"], queryVars["captcha"])
+		dmsService := api.NewDMSService(queryVars[utils.VarSessionID], lgr)
+		resp, err := dmsService.Login(queryVars[utils.VarUserName], queryVars[utils.VarPassword], queryVars[utils.VarCaptcha])
 		if err != nil {
 			utils.WriteJSONError(writer, err)
 			return
