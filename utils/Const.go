@@ -4,6 +4,8 @@
 
 package utils
 
+import "github.com/black-dragon74/dms-api/types"
+
 const (
 	// Base URLs
 	DmsURL        = "https://dms.jaipur.manipal.edu/"
@@ -67,4 +69,17 @@ const (
 	ASPLoginEventValidation    = "/wEdAAep4CnDEBO+DK7ogDE9yIJSdR78oILfrSzgm87C/a1IYZxpWckI3qdmfEJVCu2f5cGK8hF2GuqB1EkPPnfRI0IzmX+TFKdoKJU/yfSArg3MIyhcPbspsZuAvIcHzSMoo5oTEvVQ5UbiG8J6VK1P0lg47nw9ow/C86maq2rS+tJpbynFcaYfcgcmP+IGmR/HOn4="
 	ASPLoginViewState          = "/wEPDwUKLTQxMTUwMTQyNw9kFgICAw9kFgICAw9kFgQCCQ9kFgJmD2QWAgIBDw8WAh4ISW1hZ2VVcmwFJ0dlbmVyYXRlQ2FwdGNoYS5hc3B4PzYzNzM0MjY4MjUyNjcyOTc5NGRkAhMPDxYCHgdWaXNpYmxlaGRkZFbWHdkndpKMZ2FmRaLaq+f+wL+6ZH//WlWjnAiYNA/W"
 	ASPLoginViewStateGenerator = "6ED0046F"
+
+	// Query params, used to avoid usage of magic strings
+	VarSessionID = "sessionid"
+	VarUserName  = "username"
+	VarPassword  = "password"
+	VarCaptcha   = "captcha"
+
+	// Various Errors used in the API
+	ErrorLoginFailed   = types.APIError("Login failed") // TODO: Must be all lower case
+	ErrorTableNotFound = types.APIError("table not found")
+	ErrorTableNoBody   = types.APIError("table has no body")
+	ErrorTableNoHeader = types.APIError("table has no header")
+	ErrorTableNoData   = types.APIError("table has no data")
 )
