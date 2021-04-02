@@ -83,6 +83,7 @@ const (
 	ErrorTableNoBody   = types.APIError("table has no body")
 	ErrorTableNoHeader = types.APIError("table has no header")
 	ErrorTableNoData   = types.APIError("table has no data")
+	ErrorNoAttendance   = types.APIError("attendance not available")
 )
 
 // Slices are not thread safe in Go. There is no mutex lock
