@@ -25,7 +25,7 @@ func CaptchaAuthHandler(lgr *zap.Logger) http.HandlerFunc {
 		}
 
 		// Create a new DMS service and ask it to log us in
-		dmsService := api.NewDMSService(queryVars[utils.VarSessionID], lgr)
+		dmsService := api.NewDMSSession(queryVars[utils.VarSessionID], lgr)
 		resp, err := dmsService.Login(queryVars[utils.VarUserName], queryVars[utils.VarPassword], queryVars[utils.VarCaptcha])
 		if err != nil {
 			utils.WriteJSONError(writer, err)

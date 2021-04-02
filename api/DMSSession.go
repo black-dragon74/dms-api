@@ -5,13 +5,13 @@ import (
 	"go.uber.org/zap"
 )
 
-type DMSService struct {
+type DMSSession struct {
 	session internal.Session
 	lgr     *zap.Logger
 }
 
-func NewDMSService(sessionID string, lgr *zap.Logger) DMSService {
-	svc := DMSService{
+func NewDMSSession(sessionID string, lgr *zap.Logger) DMSSession {
+	svc := DMSSession{
 		session: internal.NewSession(sessionID),
 		lgr:     lgr,
 	}

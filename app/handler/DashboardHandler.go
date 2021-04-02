@@ -22,7 +22,7 @@ func DashboardHandler(lgr *zap.Logger) http.HandlerFunc {
 		}
 
 		// Create a new DMS service and ask it to provide us with `Dashboard` data
-		dmsService := api.NewDMSService(args[utils.VarSessionID], lgr)
+		dmsService := api.NewDMSSession(args[utils.VarSessionID], lgr)
 		resp, err := dmsService.GetDashboard()
 		if err != nil {
 			utils.WriteJSONError(writer, err)

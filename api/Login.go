@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func (d DMSService) Login(userName string, password string, captcha string) (types.CaptchaAuthModel, error) {
+func (d DMSSession) Login(userName string, password string, captcha string) (types.CaptchaAuthModel, error) {
 	// Prepare the Headers
 	reqHeaders := map[string][]string{
 		"Accept":                    {utils.HeaderAccept},

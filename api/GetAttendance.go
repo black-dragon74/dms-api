@@ -6,7 +6,7 @@ import (
 	"github.com/black-dragon74/dms-api/utils"
 )
 
-func (d DMSService) GetAttendance() (types.AttendanceModel, error) {
+func (d DMSSession) GetAttendance() (types.AttendanceModel, error) {
 	// Validate the Session
 	if !d.session.Validate() {
 		return types.AttendanceModel{}, utils.ErrorLoginFailed

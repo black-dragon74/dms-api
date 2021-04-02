@@ -22,7 +22,7 @@ func AttendanceHandler(lgr *zap.Logger) http.HandlerFunc {
 		}
 
 		// Create a new DMS session and get the attendance
-		dms := api.NewDMSService(args[utils.VarSessionID], lgr)
+		dms := api.NewDMSSession(args[utils.VarSessionID], lgr)
 		data, err := dms.GetAttendance()
 		if err != nil {
 			utils.WriteJSONError(writer, err)

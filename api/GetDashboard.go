@@ -6,7 +6,7 @@ import (
 	"github.com/black-dragon74/dms-api/utils"
 )
 
-func (d DMSService) GetDashboard() (types.DashboardModel, error) {
+func (d DMSSession) GetDashboard() (types.DashboardModel, error) {
 	// Validate the session
 	if !d.session.Validate() {
 		return types.DashboardModel{}, utils.ErrorLoginFailed
