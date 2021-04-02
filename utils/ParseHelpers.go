@@ -72,6 +72,37 @@ func ParseHTMLTable(tbl *goquery.Document, elemID string) (types.HTMLTableModel,
 	return retVal, nil
 }
 
+func SwitchSemester(sem string) (string, error) {
+	switch sem {
+	case "1":
+		return "I", nil
+	case "2":
+		return "II", nil
+	case "3":
+		return "III", nil
+	case "4":
+		return "IV", nil
+	case "5":
+		return "V", nil
+	case "6":
+		return "VI", nil
+	case "7":
+		return "VII", nil
+	case "8":
+		return "VIII", nil
+	case "9":
+		return "IX", nil
+	case "10":
+		return "X", nil
+	case "11":
+		return "XI", nil
+	case "12":
+		return "XII", nil
+	default:
+		return "", ErrorInvalidSemester
+	}
+}
+
 // StripSpecialChars removes all special characters from `s`
 func stripSpecialChars(s string) string {
 	stripper := regexp.MustCompile("[^0-9a-zA-Z]+")

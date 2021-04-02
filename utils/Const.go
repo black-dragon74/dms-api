@@ -64,6 +64,8 @@ const (
 	HeaderSecFetchUser            = "?1"
 	HeaderUpgradeInsecureRequests = "1"
 	HeaderUserAgent               = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36"
+	HeaderXMicrosoftAjax          = "Delta=true"
+	HeaderXRequestedWith          = "XMLHttpRequest"
 
 	// ASP.NET Specific Values
 	ASPLoginEventTarget        = "hprlnkStduent"
@@ -76,14 +78,23 @@ const (
 	VarUserName  = "username"
 	VarPassword  = "password"
 	VarCaptcha   = "captcha"
+	VarSemester  = "semester"
 
 	// Various Errors used in the API
-	ErrorLoginFailed   = types.APIError("Login failed") // TODO: Must be all lower case
-	ErrorTableNotFound = types.APIError("table not found")
-	ErrorTableNoBody   = types.APIError("table has no body")
-	ErrorTableNoHeader = types.APIError("table has no header")
-	ErrorTableNoData   = types.APIError("table has no data")
-	ErrorNoAttendance   = types.APIError("attendance not available")
+	ErrorLoginFailed     = types.APIError("Login failed") // TODO: Must be all lower case
+	ErrorTableNotFound   = types.APIError("table not found")
+	ErrorTableNoBody     = types.APIError("table has no body")
+	ErrorTableNoHeader   = types.APIError("table has no header")
+	ErrorTableNoData     = types.APIError("table has no data")
+	ErrorNoAttendance    = types.APIError("attendance not available")
+	ErrorInvalidSemester = types.APIError("invalid semester")
+
+	// Various ASP.NET variables present in the DOM
+	IdForEventTarget        = "__EVENTTARGET"
+	IdForEventValidation    = "__EVENTVALIDATION"
+	IdForViewState          = "__VIEWSTATE"
+	IdForViewStateGenerator = "__VIEWSTATEGENERATOR"
+	IdForResultSemester     = "ctl00$ContentPlaceHolder1$ddlSemester"
 )
 
 // Slices are not thread safe in Go. There is no mutex lock
