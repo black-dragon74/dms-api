@@ -14,9 +14,8 @@ func DashboardHandler(lgr *zap.Logger) http.HandlerFunc {
 		lgr.Info("[Handler] [DashboardHandler] Handling /dashboard")
 
 		// Extract and validate the vars
-		reqVars := []string{utils.VarSessionID}
-		args := utils.ParseArgs(request, &reqVars)
-		err := utils.ValidateArgs(&reqVars, &args)
+		args := utils.ParseArgs(request, &utils.SliceSessionID)
+		err := utils.ValidateArgs(&utils.SliceSessionID, &args)
 		if err != nil {
 			utils.WriteJSONError(writer, err)
 			return

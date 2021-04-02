@@ -84,3 +84,10 @@ const (
 	ErrorTableNoHeader = types.APIError("table has no header")
 	ErrorTableNoData   = types.APIError("table has no data")
 )
+
+// Slices are not thread safe in Go. There is no mutex lock
+// on this var as this is only set once. Also, writing to any of the
+// slice(s) defined here is a human error and should be avoided at all costs.
+
+// SliceSessionID is a slice containing one element with value VarSessionID
+var SliceSessionID = []string{VarSessionID}
