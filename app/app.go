@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/black-dragon74/dms-api/app/router"
 	"github.com/black-dragon74/dms-api/config"
+	"github.com/black-dragon74/dms-api/initialize"
 	"github.com/gorilla/handlers"
 	"go.uber.org/zap"
 	"net/http"
@@ -14,7 +15,14 @@ import (
 )
 
 func Start(cfg *config.Config, lgr *zap.Logger) {
-	rtr := router.NewRouter(lgr, cfg)
+	// Init the data store
+	store, err := initialize.DataStore(lgr, cfg)
+	if err != nil {
+		lgr.Error(fmt.Sprintf("[App] [Start] [DataStore] %s", err.Error()))
+		return
+	}
+
+	rtr := router.NewRouter(lgr, cfg, store)
 	if rtr == nil {
 		// Error already logged in `NewRouter`
 		return
@@ -28,7 +36,7 @@ func Start(cfg *config.Config, lgr *zap.Logger) {
 	go gracefulShutdown(lgr, srv)
 
 	lgr.Info(fmt.Sprintf("[App] [Start] Server is up and running on http://%s", cfg.API.GetAddress()))
-	err := srv.ListenAndServe()
+	err = srv.ListenAndServe()
 	if err != nil && err != http.ErrServerClosed {
 		lgr.Error(fmt.Sprintf("[App] [Start] Failed to start the server, %s", err.Error()))
 	}

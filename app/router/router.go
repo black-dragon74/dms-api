@@ -1,25 +1,18 @@
 package router
 
 import (
-	"fmt"
 	"github.com/black-dragon74/dms-api/app/handler"
 	"github.com/black-dragon74/dms-api/app/middleware"
 	"github.com/black-dragon74/dms-api/config"
-	"github.com/black-dragon74/dms-api/initialize"
+	"github.com/black-dragon74/dms-api/types"
 	"github.com/gorilla/mux"
 	"go.uber.org/zap"
 	"net/http"
 )
 
-func NewRouter(lgr *zap.Logger, cfg *config.Config) *mux.Router {
+func NewRouter(lgr *zap.Logger, cfg *config.Config, store *types.DataStoreModel) *mux.Router {
 	rtr := mux.NewRouter()
 	rtr.Use(middleware.WithContentJSON)
-
-	store, err := initialize.DataStore(lgr, cfg)
-	if err != nil {
-		lgr.Error(fmt.Sprintf("[Router] [NewRouter] [DataStore] %s", err.Error()))
-		return nil
-	}
 
 	// Map route to handler functions
 	// Default Handler
