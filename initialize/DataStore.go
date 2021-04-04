@@ -1,10 +1,13 @@
 package initialize
 
 import (
+	"encoding/json"
 	"github.com/black-dragon74/dms-api/config"
 	"github.com/black-dragon74/dms-api/types"
+	"github.com/black-dragon74/dms-api/utils"
 	"go.uber.org/zap"
 	"io/ioutil"
+	"net/http"
 	"time"
 )
 
@@ -12,21 +15,20 @@ func DataStore(lgr *zap.Logger, cfg *config.Config) (*types.DataStoreModel, erro
 	lgr.Info("[Initilaize] [DataStore] Loading stores in memory")
 	store := &types.DataStoreModel{}
 
-	data, err := read(cfg.API.GetMessMenuDataStore())
+	// Load both the stores into memory
+	err := loadContactsStore(lgr, &store.ContactsData)
 	if err != nil {
-		return &types.DataStoreModel{}, err
+		return nil, err
 	}
-	store.MessMenuData = data
 
-	data, err = read(cfg.API.GetFacultyDataStore())
+	err = loadMessStore(lgr, &store.MessMenuData)
 	if err != nil {
-		return &types.DataStoreModel{}, err
+		return nil, err
 	}
-	store.ContactsData = data
 
 	// Watch for changes if requested
 	if cfg.API.MonitorDataStore() {
-		go watchStoreForChanges(cfg, store, lgr)
+		go watchStoreForChanges(store, lgr)
 	} else {
 		lgr.Info("[Initialize] [DataStore] [WatchStoreForChanges] Monitoring disabled by config")
 	}
@@ -34,32 +36,73 @@ func DataStore(lgr *zap.Logger, cfg *config.Config) (*types.DataStoreModel, erro
 	return store, nil
 }
 
-func read(file string) ([]byte, error) {
-	return ioutil.ReadFile(file)
-}
-
-func watchStoreForChanges(cfg *config.Config, store *types.DataStoreModel, lgr *zap.Logger) {
-	lgr.Info("[Initialize] [DataStore] [WatchStoreForChanges] Actively monitoring store for changes")
+func watchStoreForChanges(store *types.DataStoreModel, lgr *zap.Logger) {
+	lgr.Info("[Initialize] [DataStore] [WatchStoreForChanges] Actively monitoring stores for changes")
 	messTicker := time.NewTicker(5 * time.Minute)
-	contactsTicker := time.NewTicker(4 * time.Hour)
+	contactsTicker := time.NewTicker(24 * time.Hour)
 
 	for {
 		select {
 		case <-messTicker.C:
 			lgr.Info("[Initialize] [DataStore] [WatchStoreForChanges] [MessTicker] Tick")
-			data, err := read(cfg.API.GetMessMenuDataStore())
-			if err != nil {
-				return
-			}
-			store.MessMenuData = data
+			_ = loadMessStore(lgr, &store.MessMenuData)
 
 		case <-contactsTicker.C:
 			lgr.Info("[Initialize] [DataStore] [WatchStoreForChanges] [ContactsTicker] Tick")
-			data, err := read(cfg.API.GetFacultyDataStore())
-			if err != nil {
-				return
-			}
-			store.ContactsData = data
+			_ = loadContactsStore(lgr, &store.ContactsData)
 		}
 	}
+}
+
+// loadContactsStore queries the contacts data store and loads the response into memory
+func loadContactsStore(lgr *zap.Logger, store *[]types.ContactsModel) error {
+	// Fetch the contacts store
+	resp, err := http.Get(utils.URLContactsDataStore)
+	if err != nil {
+		lgr.Error("[Initialize] [DataStore] Unable to fetch the contacts data store")
+		return err
+	}
+	defer resp.Body.Close()
+
+	// Unmarshal to the type
+	data, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		lgr.Error("[Initialize] [DataStore] Unable to read the contacts store response")
+		return err
+	}
+
+	err = json.Unmarshal(data, store)
+	if err != nil {
+		lgr.Error("[Initialize] [DataStore] Contatcs store returned an unexpected response")
+		return err
+	}
+	lgr.Info("[Initialize] [DataStore] Contacts store loaded successfully")
+
+	return nil
+}
+
+// loadMessStore queries the mess menu data store and loads the response into memory
+func loadMessStore(lgr *zap.Logger, store *types.MessMenuModel) error {
+	resp, err := http.Get(utils.URLMessDataStore)
+	if err != nil {
+		lgr.Error("[Initialize] [DataStore] Unable to fetch the mess data store")
+		return err
+	}
+	defer resp.Body.Close()
+
+	// Unmarshal to the type
+	data, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		lgr.Error("[Initialize] [DataStore] Unable to read the mess store response")
+		return err
+	}
+
+	err = json.Unmarshal(data, store)
+	if err != nil {
+		lgr.Error("[Initialize] [DataStore] Mess store returned an unexpected response")
+		return err
+	}
+	lgr.Info("[Initialize] [DataStore] Mess store loaded successfully")
+
+	return nil
 }

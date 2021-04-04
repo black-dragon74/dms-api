@@ -19,6 +19,10 @@ const (
 	// Test URLS
 	PostManPost = "https://postman-echo.com/post"
 
+	// DataStore URLs
+	URLMessDataStore     = "https://dmsdatastore.nicksuniversum.com/mess"
+	URLContactsDataStore = "https://dmsdatastore.nicksuniversum.com/contacts"
+
 	// Cookies
 	SessionCookie = "ASP.NET_SessionId"
 

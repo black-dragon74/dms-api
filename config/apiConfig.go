@@ -8,8 +8,6 @@ type APIConfig struct {
 	monitorDataStore bool
 	host             string
 	port             int
-	facultyData      string
-	messMenuData     string
 }
 
 func (a APIConfig) UseRedis() bool {
@@ -22,12 +20,4 @@ func (a APIConfig) MonitorDataStore() bool {
 
 func (a APIConfig) GetAddress() string {
 	return fmt.Sprintf("%s:%d", a.host, a.port)
-}
-
-func (a APIConfig) GetFacultyDataStore() string {
-	return a.facultyData
-}
-
-func (a APIConfig) GetMessMenuDataStore() string {
-	return a.messMenuData
 }
