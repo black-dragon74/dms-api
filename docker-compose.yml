@@ -1,0 +1,8 @@
+version: '3.3'
+
+services:
+  muj-dmsapi:
+    ports:
+      - 2980:8000 # Mapping of host:container
+    restart: always
+    build: .
