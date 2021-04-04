@@ -26,8 +26,6 @@ func main() {
 func checkForDeps() {
 	deps := []string{
 		"config.toml",
-		"data/mess_menu.json",
-		"data/faculties.json",
 	}
 
 	for _, v := range deps {
