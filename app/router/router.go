@@ -32,6 +32,7 @@ func NewRouter(lgr *zap.Logger, cfg *config.Config, store *types.DataStoreModel)
 	rtr.HandleFunc("/dashboard", handler.DashboardHandler(lgr)).Methods(http.MethodGet)
 	rtr.HandleFunc("/attendance", handler.AttendanceHandler(lgr)).Methods(http.MethodGet)
 	rtr.HandleFunc("/results", handler.ResultsHandler(lgr)).Methods(http.MethodGet)
+	rtr.HandleFunc("/internals", handler.InternalsHandler(lgr)).Methods(http.MethodGet)
 
 	// Some browsers request for favicon even when the content type is set to JSON, handle that
 	rtr.HandleFunc("/favicon.ico", handler.FaviconHandler(lgr)).Methods(http.MethodGet)

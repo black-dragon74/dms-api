@@ -109,6 +109,11 @@ func stripSpecialChars(s string) string {
 	return stripper.ReplaceAllString(s, "")
 }
 
+// StripParen returns a string by removing the parentheses
+func StripParen(str string) string {
+	return regexp.MustCompile(`\(.*?\)`).ReplaceAllString(str, "")
+}
+
 // ToSnakeCase converts `s` to snake_case
 func toSnakeCase(s string) string {
 	matchFirstCap := regexp.MustCompile("(.)([A-Z][a-z]+)")
