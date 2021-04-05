@@ -19,8 +19,8 @@ func NewRouter(lgr *zap.Logger, cfg *config.Config, store *types.DataStoreModel)
 	rtr.HandleFunc("/", handler.WelcomeHandler(lgr)).Methods(http.MethodGet)
 
 	// Routes without session ID, require respective data stores
-	rtr.HandleFunc("/mess_menu", handler.MessMenuHandler(lgr, store.MessMenuData)).Methods(http.MethodGet)
-	rtr.HandleFunc("/contacts", handler.ContactsHandler(lgr, store.ContactsData)).Methods(http.MethodGet)
+	rtr.HandleFunc("/mess_menu", handler.MessMenuHandler(lgr, &store.MessMenuData)).Methods(http.MethodGet)
+	rtr.HandleFunc("/contacts", handler.ContactsHandler(lgr, &store.ContactsData)).Methods(http.MethodGet)
 
 	// Routes part of auth handshake
 	rtr.HandleFunc("/captcha", handler.GetCaptchaHandler(lgr)).Methods(http.MethodGet)
