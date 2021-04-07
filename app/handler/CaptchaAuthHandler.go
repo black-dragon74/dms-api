@@ -4,12 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/black-dragon74/dms-api/api"
+	"github.com/black-dragon74/dms-api/config"
 	"github.com/black-dragon74/dms-api/utils"
+	"github.com/go-redis/redis/v8"
 	"go.uber.org/zap"
 	"net/http"
 )
 
-func CaptchaAuthHandler(lgr *zap.Logger) http.HandlerFunc {
+func CaptchaAuthHandler(lgr *zap.Logger, cfg *config.Config, rds *redis.Client) http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
 		lgr.Info("[Handler] [CaptchaAuthHandler] Handling /captcha_auth")
 
@@ -25,7 +27,7 @@ func CaptchaAuthHandler(lgr *zap.Logger) http.HandlerFunc {
 		}
 
 		// Create a new DMS service and ask it to log us in
-		dmsService := api.NewDMSSession(queryVars[utils.VarSessionID], lgr)
+		dmsService := api.NewDMSSession(queryVars[utils.VarSessionID], cfg, rds)
 		resp, err := dmsService.Login(queryVars[utils.VarUserName], queryVars[utils.VarPassword], queryVars[utils.VarCaptcha])
 		if err != nil {
 			utils.WriteJSONError(writer, err)

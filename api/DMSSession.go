@@ -2,18 +2,21 @@ package api
 
 import (
 	"github.com/black-dragon74/dms-api/api/internal"
-	"go.uber.org/zap"
+	"github.com/black-dragon74/dms-api/config"
+	"github.com/go-redis/redis/v8"
 )
 
 type DMSSession struct {
 	session internal.Session
-	lgr     *zap.Logger
+	cfg     *config.Config
+	rds     *redis.Client
 }
 
-func NewDMSSession(sessionID string, lgr *zap.Logger) DMSSession {
+func NewDMSSession(sessionID string, cfg *config.Config, rds *redis.Client) DMSSession {
 	svc := DMSSession{
-		session: internal.NewSession(sessionID),
-		lgr:     lgr,
+		session: internal.NewSession(sessionID, cfg, rds),
+		cfg:     cfg,
+		rds:     rds,
 	}
 
 	return svc

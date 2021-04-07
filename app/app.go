@@ -6,6 +6,7 @@ import (
 	"github.com/black-dragon74/dms-api/app/router"
 	"github.com/black-dragon74/dms-api/config"
 	"github.com/black-dragon74/dms-api/initialize"
+	"github.com/go-redis/redis/v8"
 	"github.com/gorilla/handlers"
 	"go.uber.org/zap"
 	"net/http"
@@ -22,7 +23,10 @@ func Start(cfg *config.Config, lgr *zap.Logger) {
 		return
 	}
 
-	rtr := router.NewRouter(lgr, cfg, store)
+	// Initialize the redis store, it will do nothing ig `api.useRedis` is false
+	rds := initialize.RedisStore(cfg, lgr)
+
+	rtr := router.NewRouter(lgr, cfg, store, rds)
 	if rtr == nil {
 		// Error already logged in `NewRouter`
 		return
@@ -33,7 +37,7 @@ func Start(cfg *config.Config, lgr *zap.Logger) {
 		Addr:    cfg.API.GetAddress(),
 	}
 
-	go gracefulShutdown(lgr, srv)
+	go gracefulShutdown(cfg, lgr, srv, rds)
 
 	lgr.Info(fmt.Sprintf("[App] [Start] Server is up and running on http://%s", cfg.API.GetAddress()))
 	err = srv.ListenAndServe()
@@ -42,7 +46,7 @@ func Start(cfg *config.Config, lgr *zap.Logger) {
 	}
 }
 
-func gracefulShutdown(lgr *zap.Logger, srv *http.Server) {
+func gracefulShutdown(cfg *config.Config, lgr *zap.Logger, srv *http.Server, rds *redis.Client) {
 	termChan := make(chan os.Signal)
 	signal.Notify(termChan, os.Interrupt, os.Kill)
 
@@ -54,5 +58,9 @@ func gracefulShutdown(lgr *zap.Logger, srv *http.Server) {
 
 	go func() {
 		_ = srv.Shutdown(ctx)
+
+		if cfg.API.UseRedis() {
+			_ = rds.Shutdown(ctx)
+		}
 	}()
 }

@@ -1,6 +1,8 @@
 package api
 
 import (
+	"context"
+	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/black-dragon74/dms-api/types"
 	"github.com/black-dragon74/dms-api/utils"
@@ -76,6 +78,14 @@ func (d DMSSession) Login(userName string, password string, captcha string) (typ
 	} else {
 		retVal.UserName = name
 		retVal.LoginSucceeded = true
+	}
+
+	// If redis is to be used, set the session in DB
+	if d.cfg.API.UseRedis() && retVal.LoginSucceeded {
+		e := d.rds.Set(context.Background(), d.session.GetID(), d.session.GetID(), 20*utils.VarRedisTimeout).Err()
+		if e != nil {
+			fmt.Printf("[ERROR] [API] [Login] [SetSessionToCache] %s\n", e.Error())
+		}
 	}
 
 	return retVal, nil

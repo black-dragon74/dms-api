@@ -6,8 +6,9 @@ import (
 )
 
 type Config struct {
-	env string
-	API APIConfig
+	env   string
+	API   APIConfig
+	Redis RedisConfig
 }
 
 const DevEnv = "dev"
@@ -32,6 +33,15 @@ func Load() *Config {
 			host:             viper.GetString("api.host"),
 			port:             viper.GetInt("api.port"),
 		},
+	}
+
+	if myCfg.API.UseRedis() {
+		myCfg.Redis = RedisConfig{
+			dbid: viper.GetInt("redis.dbid"),
+			host: viper.GetString("redis.host"),
+			pass: viper.GetString("redis.pass"),
+			port: viper.GetInt("redis.port"),
+		}
 	}
 
 	return &myCfg

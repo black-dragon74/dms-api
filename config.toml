@@ -11,3 +11,11 @@ env = "dev"
     # Host and port to listen on
     host = "localhost"
     port = 8000
+
+# This is read only when api.redis is set to true
+[redis]
+    # Redis server config
+    dbid = 0
+    host = "dmsapi-redis"
+    pass = ""
+    port = 6379

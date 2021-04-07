@@ -39,7 +39,7 @@ func GetCaptcha() (types.GetCaptchaModel, error) {
 	retVal.Generator = utils.DmsURL + v
 
 	// Now get the new URL with session
-	sess := internal.NewSession(retVal.SessionID)
+	sess := internal.NewSession(retVal.SessionID, nil, nil)
 	resp, err = sess.Get(retVal.Generator, nil)
 	if err != nil {
 		return types.GetCaptchaModel{}, err

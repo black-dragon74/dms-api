@@ -5,12 +5,13 @@ import (
 	"github.com/black-dragon74/dms-api/app/middleware"
 	"github.com/black-dragon74/dms-api/config"
 	"github.com/black-dragon74/dms-api/types"
+	"github.com/go-redis/redis/v8"
 	"github.com/gorilla/mux"
 	"go.uber.org/zap"
 	"net/http"
 )
 
-func NewRouter(lgr *zap.Logger, cfg *config.Config, store *types.DataStoreModel) *mux.Router {
+func NewRouter(lgr *zap.Logger, cfg *config.Config, store *types.DataStoreModel, rds *redis.Client) *mux.Router {
 	rtr := mux.NewRouter()
 	rtr.Use(middleware.WithContentJSON)
 
@@ -26,15 +27,15 @@ func NewRouter(lgr *zap.Logger, cfg *config.Config, store *types.DataStoreModel)
 	rtr.HandleFunc("/captcha", handler.GetCaptchaHandler(lgr)).Methods(http.MethodGet)
 	rtr.HandleFunc(
 		"/captcha_auth",
-		handler.CaptchaAuthHandler(lgr)).Methods(http.MethodGet)
+		handler.CaptchaAuthHandler(lgr, cfg, rds)).Methods(http.MethodGet)
 
 	// Routes that need a session ID to through
-	rtr.HandleFunc("/dashboard", handler.DashboardHandler(lgr)).Methods(http.MethodGet)
-	rtr.HandleFunc("/attendance", handler.AttendanceHandler(lgr)).Methods(http.MethodGet)
-	rtr.HandleFunc("/results", handler.ResultsHandler(lgr)).Methods(http.MethodGet)
-	rtr.HandleFunc("/internals", handler.InternalsHandler(lgr)).Methods(http.MethodGet)
-	rtr.HandleFunc("/gpa", handler.GPAHandler(lgr)).Methods(http.MethodGet)
-	rtr.HandleFunc("/events", handler.EventsHandler(lgr)).Methods(http.MethodGet)
+	rtr.HandleFunc("/dashboard", handler.DashboardHandler(lgr, cfg, rds)).Methods(http.MethodGet)
+	rtr.HandleFunc("/attendance", handler.AttendanceHandler(lgr, cfg, rds)).Methods(http.MethodGet)
+	rtr.HandleFunc("/results", handler.ResultsHandler(lgr, cfg, rds)).Methods(http.MethodGet)
+	rtr.HandleFunc("/internals", handler.InternalsHandler(lgr, cfg, rds)).Methods(http.MethodGet)
+	rtr.HandleFunc("/gpa", handler.GPAHandler(lgr, cfg, rds)).Methods(http.MethodGet)
+	rtr.HandleFunc("/events", handler.EventsHandler(lgr, cfg, rds)).Methods(http.MethodGet)
 
 	// TODO: Announcements and Fee section is almost never used
 	// And parsing them is such a pain as the data is so unpredictable and scattered

@@ -99,6 +99,9 @@ const (
 	IdForViewState          = "__VIEWSTATE"
 	IdForViewStateGenerator = "__VIEWSTATEGENERATOR"
 	IdForResultSemester     = "ctl00$ContentPlaceHolder1$ddlSemester"
+
+	// Redis related consts
+	VarRedisTimeout = 20 // In minutes
 )
 
 // Slices are not thread safe in Go. There is no mutex lock

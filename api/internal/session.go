@@ -1,8 +1,12 @@
 package internal
 
 import (
+	"context"
+	"fmt"
 	"github.com/PuerkitoBio/goquery"
+	"github.com/black-dragon74/dms-api/config"
 	"github.com/black-dragon74/dms-api/utils"
+	"github.com/go-redis/redis/v8"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -10,6 +14,8 @@ import (
 
 type Session struct {
 	sid string
+	cfg *config.Config
+	rds *redis.Client
 }
 
 func (s Session) GetID() string {
@@ -17,6 +23,11 @@ func (s Session) GetID() string {
 }
 
 func (s Session) Validate() bool {
+	// If redis store is to be used, check from it else follow conventional method
+	if s.cfg.API.UseRedis() {
+		return validateSessionFromCache(s)
+	}
+
 	// Make a get request to profileURL and check for reg no ID's value
 	// It should not be null
 	resp, err := s.Get(utils.ProfileURL, nil)
@@ -35,9 +46,11 @@ func (s Session) Validate() bool {
 	return reg != ""
 }
 
-func NewSession(sessionID string) Session {
+func NewSession(sessionID string, cfg *config.Config, rds *redis.Client) Session {
 	return Session{
 		sid: sessionID,
+		cfg: cfg,
+		rds: rds,
 	}
 }
 
@@ -80,4 +93,14 @@ func (s Session) Post(url string, headers *map[string][]string, body io.Reader) 
 	}
 
 	return resp, nil
+}
+
+func validateSessionFromCache(sess Session) bool {
+	// Query the client for the session ID
+	_, err := sess.rds.Get(context.Background(), sess.sid).Result()
+	if err != nil {
+		fmt.Printf("[ERROR] [API] [Session] [ValidateSessionFromCache] %s\n", err.Error())
+	}
+
+	return err == nil
 }

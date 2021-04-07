@@ -1,8 +1,12 @@
 version: '3.3'
 
 services:
+  dmsapi-redis:
+    image: redis:6-alpine
   muj-dmsapi:
     ports:
       - 2980:8000 # Mapping of host:container
     restart: always
     build: .
+    depends_on:
+      - dmsapi-redis
