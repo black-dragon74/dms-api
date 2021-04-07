@@ -36,6 +36,12 @@ func NewRouter(lgr *zap.Logger, cfg *config.Config, store *types.DataStoreModel)
 	rtr.HandleFunc("/gpa", handler.GPAHandler(lgr)).Methods(http.MethodGet)
 	rtr.HandleFunc("/events", handler.EventsHandler(lgr)).Methods(http.MethodGet)
 
+	// TODO: Announcements and Fee section is almost never used
+	// And parsing them is such a pain as the data is so unpredictable and scattered
+	// It is best to leave them unattended as of now
+	rtr.HandleFunc("/fee", handler.FeatureNotAvailableHandler(lgr)).Methods(http.MethodGet)
+	rtr.HandleFunc("/announcements", handler.FeatureNotAvailableHandler(lgr)).Methods(http.MethodGet)
+
 	// Some browsers request for favicon even when the content type is set to JSON, handle that
 	rtr.HandleFunc("/favicon.ico", handler.FaviconHandler(lgr)).Methods(http.MethodGet)
 
