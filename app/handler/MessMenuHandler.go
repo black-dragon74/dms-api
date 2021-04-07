@@ -9,7 +9,7 @@ import (
 	"net/http"
 )
 
-func MessMenuHandler(lgr *zap.Logger, store types.MessMenuModel) http.HandlerFunc {
+func MessMenuHandler(lgr *zap.Logger, store *types.MessMenuModel) http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
 		lgr.Info("[Handler] [MessMenuHandler] Handling /mess_menu")
 

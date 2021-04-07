@@ -9,7 +9,7 @@ import (
 	"net/http"
 )
 
-func ContactsHandler(lgr *zap.Logger, store []types.ContactsModel) http.HandlerFunc {
+func ContactsHandler(lgr *zap.Logger, store *[]types.ContactsModel) http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
 		lgr.Info("[Handler] [ContactsHandler] Handling /contacts")
 
