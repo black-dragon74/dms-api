@@ -8,6 +8,7 @@ import (
 	"github.com/black-dragon74/dms-api/utils"
 	"net/url"
 	"strings"
+	"time"
 )
 
 func (d DMSSession) Login(userName string, password string, captcha string) (types.CaptchaAuthModel, error) {
@@ -82,7 +83,12 @@ func (d DMSSession) Login(userName string, password string, captcha string) (typ
 
 	// If redis is to be used, set the session in DB
 	if d.cfg.API.UseRedis() && retVal.LoginSucceeded {
-		e := d.rds.Set(context.Background(), d.session.GetID(), d.session.GetID(), 20*utils.VarRedisTimeout).Err()
+		e := d.rds.Set(
+			context.Background(),
+			d.session.GetID(),
+			d.session.GetID(),
+			time.Minute*utils.VarRedisTimeout).Err()
+
 		if e != nil {
 			fmt.Printf("[ERROR] [API] [Login] [SetSessionToCache] %s\n", e.Error())
 		}
