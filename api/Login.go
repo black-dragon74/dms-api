@@ -72,6 +72,8 @@ func (d DMSSession) Login(userName string, password string, captcha string) (typ
 			authErrror := soup.Find(utils.IdForCredentialsError).Text()
 			if strings.Contains(authErrror, "exceded") {
 				retVal.LoginSucceeded = true
+			} else {
+				retVal.CredentialsError = true
 			}
 		}
 	} else {
