@@ -2,6 +2,7 @@ package internal
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/black-dragon74/dms-api/config"
@@ -22,10 +23,22 @@ func (s Session) GetID() string {
 	return s.sid
 }
 
+func (s Session) GetRedisClient() *redis.Client {
+	return s.rds
+}
+
 func (s Session) Validate() bool {
 	// If redis store is to be used, check from it else follow conventional method
 	if s.cfg.API.UseRedis() {
-		return validateSessionFromCache(s)
+		valid := validateSessionFromCache(s)
+
+		if valid {
+			if e := utils.UpdateSessionExpiry(s.GetID(), s.GetRedisClient()); e != nil {
+				fmt.Printf("[ERROR] [API] [Session] [UpdateSessionExpiry] %s\n", e.Error())
+			}
+		}
+
+		return valid
 	}
 
 	// Make a get request to profileURL and check for reg no ID's value
@@ -98,7 +111,7 @@ func (s Session) Post(url string, headers *map[string][]string, body io.Reader) 
 func validateSessionFromCache(sess Session) bool {
 	// Query the client for the session ID
 	_, err := sess.rds.Get(context.Background(), sess.sid).Result()
-	if err != nil {
+	if err != nil && !errors.Is(err, redis.Nil) {
 		fmt.Printf("[ERROR] [API] [Session] [ValidateSessionFromCache] %s\n", err.Error())
 	}
 

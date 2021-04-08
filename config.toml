@@ -3,7 +3,7 @@ env = "dev"
 
 [api]
     # Redis is used to cache the session IDs to improve performance
-    redis = false
+    redis = true
 
     # Turn this on if you want to monitor physical data store using a separate go routine
     monitorDataStore = true
