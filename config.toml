@@ -8,6 +8,11 @@ env = "dev"
     # Turn this on if you want to monitor physical data store using a separate go routine
     monitorDataStore = true
 
+    # As Contacts and mess menu are based on external sources, they are not as reliable
+    # You can turn them off from here, if they are off, the API will return FeatureNotAvailable
+    enableMessStore = false
+    enableContactsStore = true
+
     # Host and port to listen on
     host = "localhost"
     port = 8000
