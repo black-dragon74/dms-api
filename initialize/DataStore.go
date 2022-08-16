@@ -28,14 +28,27 @@ func DataStore(lgr *zap.Logger, cfg *config.Config) (*types.DataStoreModel, erro
 	// Wait for go-routines to exit
 	wg.Wait()
 
-	// Validate
-	// TODO: Perform validation in a better way
-	if len(store.ContactsData) == 0 || store.MessMenuData.LastUpdatedAt == "" && cfg.API.MessStoreEnabled() && cfg.API.ContactsStoreEnabled() {
-		return nil, errors.New("failed to init the stores")
+	// Validate contacts store first, only if it is enabled
+	if cfg.API.ContactsStoreEnabled() {
+		if len(store.ContactsData) == 0 {
+			return nil, errors.New("failed to read from the contacts datastore")
+		}
+	}
+
+	// Validate the mess menu store
+	if cfg.API.MessStoreEnabled() {
+		if store.MessMenuData.LastUpdatedAt == "" {
+			return nil, errors.New("failed to read from the mess menu datastore")
+		}
 	}
 
 	// Watch for changes if requested
 	if cfg.API.MonitorDataStore() {
+		if !(cfg.API.MessStoreEnabled() && cfg.API.ContactsStoreEnabled()) {
+			lgr.Info("[Initialize] [DataStore] [WatchStoreForChanges] Monitoring disabled as both the stores are disabled")
+			return store, nil
+		}
+
 		go watchStoreForChanges(store, cfg, lgr)
 	} else {
 		lgr.Info("[Initialize] [DataStore] [WatchStoreForChanges] Monitoring disabled by config")
@@ -52,11 +65,9 @@ func watchStoreForChanges(store *types.DataStoreModel, cfg *config.Config, lgr *
 	for {
 		select {
 		case <-messTicker.C:
-			lgr.Info("[Initialize] [DataStore] [WatchStoreForChanges] [MessTicker] Tick")
 			loadMessStore(lgr, &cfg.API, &store.MessMenuData, nil)
 
 		case <-contactsTicker.C:
-			lgr.Info("[Initialize] [DataStore] [WatchStoreForChanges] [ContactsTicker] Tick")
 			loadContactsStore(lgr, &cfg.API, &store.ContactsData, nil)
 		}
 	}

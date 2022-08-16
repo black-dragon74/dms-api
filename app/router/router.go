@@ -20,14 +20,24 @@ func NewRouter(lgr *zap.Logger, cfg *config.Config, store *types.DataStoreModel,
 	rtr.HandleFunc("/", handler.WelcomeHandler(lgr)).Methods(http.MethodGet)
 
 	// Routes without session ID, require respective data stores
-	rtr.HandleFunc("/mess_menu", handler.MessMenuHandler(lgr, &store.MessMenuData)).Methods(http.MethodGet)
-	rtr.HandleFunc("/contacts", handler.ContactsHandler(lgr, &store.ContactsData)).Methods(http.MethodGet)
+	// If the respective data store is disabled via config, the API will return FeatureNotAvailable
+	if !cfg.API.MessStoreEnabled() {
+		lgr.Info("[Router] [NewRouter] MessMenu datastore mapped to FeatureNotAvailable handler")
+		rtr.HandleFunc("/mess_menu", handler.FeatureNotAvailableHandler(lgr)).Methods(http.MethodGet)
+	} else {
+		rtr.HandleFunc("/mess_menu", handler.MessMenuHandler(lgr, &store.MessMenuData)).Methods(http.MethodGet)
+	}
+
+	if !cfg.API.ContactsStoreEnabled() {
+		lgr.Info("[Router] [NewRouter] Contacts datastore mapped to FeatureNotAvailable handler")
+		rtr.HandleFunc("/contacts", handler.FeatureNotAvailableHandler(lgr)).Methods(http.MethodGet)
+	} else {
+		rtr.HandleFunc("/contacts", handler.ContactsHandler(lgr, &store.ContactsData)).Methods(http.MethodGet)
+	}
 
 	// Routes part of auth handshake
 	rtr.HandleFunc("/captcha", handler.GetCaptchaHandler(lgr)).Methods(http.MethodGet)
-	rtr.HandleFunc(
-		"/captcha_auth",
-		handler.CaptchaAuthHandler(lgr, cfg, rds)).Methods(http.MethodGet)
+	rtr.HandleFunc("/captcha_auth", handler.CaptchaAuthHandler(lgr, cfg, rds)).Methods(http.MethodGet)
 
 	// Routes that need a session ID to through
 	rtr.HandleFunc("/dashboard", handler.DashboardHandler(lgr, cfg, rds)).Methods(http.MethodGet)
